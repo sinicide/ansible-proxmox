@@ -1,0 +1,32 @@
+---
+# Remove subscription banner
+- name: Turn off enterprise subscription
+  replace:
+    path: "{{enterprise_repo}}"
+    regexp: '^(deb https://enterprise.proxmox.com/debian/pve bullseye pve-enterprise)$'
+    replace: '#\1'
+
+- name: Add cron job for subscription removal notice
+  file:
+    src: ./files/remove-subscription-notice.sh
+    dest: /etc/cron.daily
+    owner: root
+    group: root
+    mode: '0755'
+    
+# Enable Dark Mode
+# https://github.com/Weilbyte/PVEDiscordDark
+- name: Download Dark Theme Script
+  get_url:
+    url: "{{dark_theme_url}}"
+    dest: "/tmp"
+    mode: "0775"
+
+- name: Execute Dark Script
+  shell: "/tmp/PVEDiscordDark.sh"
+  args:
+    executable: "/bin/bash"
+
+# install self-signed certificates
+
+# implement cronjob to remove subscription notice
